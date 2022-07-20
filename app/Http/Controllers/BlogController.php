@@ -53,4 +53,31 @@ class BlogController extends Controller
     {
         return Blog::find($id);
     }
+
+    public function destroy($id, Request $req)
+    {
+        $blog = Blog::where('id', $id)->first();
+
+        if ($blog) {
+            if ($blog->user_id == $req->user()->id) {
+                $old_path = public_path() . 'uploads/blog_images/' . $blog->image;
+                if (File::exists($old_path)) {
+                    File::delete($old_path);
+                }
+                $blog->delete();
+                return response()->json([
+                    'message' => 'Blog deleted successfully',
+                    'data' => $blog
+                ], 403);
+            } else {
+                return response()->json([
+                    'message' => 'Access denied'
+                ], 403);
+            }
+        } else {
+            return response()->json([
+                'message' => 'No blog Found'
+            ], 403);
+        }
+    }
 }
