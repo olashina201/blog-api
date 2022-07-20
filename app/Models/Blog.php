@@ -17,7 +17,15 @@ class Blog extends Model
         'user_id'
     ];
 
+    public $append = [
+        'image_url'
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    public function getImageUrlAttribute() {
+        return asset('uploads/blog_images/'.$this->image);
     }
 }

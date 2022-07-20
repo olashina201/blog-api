@@ -21,7 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Bog
 Route::post('/blog', [BlogController::class, 'create']);
 Route::get('/blogs', [BlogController::class, 'blogs']);
 Route::get('/blog/{id}', [BlogController::class, 'getSingleBlog']);
 Route::delete('/blog/{id}', [BlogController::class, 'destroy']);
+Route::put('/blog/{id}', [BlogController::class, 'update']);

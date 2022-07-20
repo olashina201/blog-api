@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use App\Models\Blog;
 
 class BlogController extends Controller
@@ -51,7 +52,17 @@ class BlogController extends Controller
 
     public function getSingleBlog($id)
     {
-        return Blog::find($id);
+        $blog = Blog::with('user')->find($id);
+        if (!$blog) {
+            return response()->json([
+                'message' => 'Blog with id' . $id . 'not found'
+            ], 403);
+        }
+
+        return response()->json([
+            'message' => 'Blog fetched successfully',
+            'data' => $blog
+        ], 200);
     }
 
     public function destroy($id, Request $req)
@@ -68,7 +79,7 @@ class BlogController extends Controller
                 return response()->json([
                     'message' => 'Blog deleted successfully',
                     'data' => $blog
-                ], 403);
+                ], 200);
             } else {
                 return response()->json([
                     'message' => 'Access denied'
@@ -78,6 +89,58 @@ class BlogController extends Controller
             return response()->json([
                 'message' => 'No blog Found'
             ], 403);
+        }
+    }
+
+    public function update($id, Request $req)
+    {
+        $blog = Blog::with('user')->find($id);
+        if ($blog) {
+            if ($blog->user_id == $req->user()->id) {
+                $validate = Validator::make($req->all(), [
+                    'title' => ['required', 'max:200'],
+                    'description' => 'required',
+                    'image' => ['nullable', 'image', 'mimes:jpg,png'],
+                    'content' => 'required'
+                ]);
+
+                if ($validate->fails()) {
+                    return response()->json([
+                        'message' => 'validation fails',
+                        'error' => $validate->errors()
+                    ], 422);
+                }
+
+                if ($req->hasFile('image')) {
+                    $image_name = time() . '.' . $req->image->extension();
+                    $req->image->move(public_path('/uploads/blog_images'), $image_name);
+                    $old_path = public_path() . 'uploads/blog_images/' . $blog->image;
+                    if (File::exists($old_path)) {
+                        File::delete($old_path);
+                    } else {
+                        $image_name = $blog->image;
+                    }
+                }
+
+                $blog->update([
+                    'title' => $req->title,
+                    'description' => $req->description,
+                    'image' => $image_name,
+                    'content' => $req->content,
+                    'user_id' => $req->user()->id
+                ]);
+
+                $blog->load('user:id,email,name');
+
+                return response()->json([
+                    'message' => 'Blog Created successfully',
+                    'data' => $blog
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Access denied'
+                ], 403);
+            }
         }
     }
 }
