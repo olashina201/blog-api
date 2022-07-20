@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use App\Models\Blog;
+use App\Models\BlogLike;
 
 class BlogController extends Controller
 {
@@ -109,8 +110,7 @@ class BlogController extends Controller
                     'message' => 'Validation error',
                     'error' => $validate->errors()
                 ], 422);
-            }
-            elseif($req->hasFile('image')) {
+            } elseif ($req->hasFile('image')) {
                 $image_name = time() . '.' . $req->image->extension();
                 $req->image->move(public_path('/uploads/blog_images'), $image_name);
                 $old_path = public_path() . 'uploads/blog_images/' . $blog->image;
@@ -138,6 +138,35 @@ class BlogController extends Controller
         } else {
             return response()->json([
                 'message' => 'Blog with id' . $id . 'not found'
+            ], 403);
+        }
+    }
+
+    public function toggleLike($id, Request $req)
+    {
+        $blog = Blog::where('id', $id)->first();
+
+        if ($blog) {
+            $user = $req->user();
+            $blog_like = BlogLike::where('blog_id', $blog->id)->where('user_id', $user->id)->first();
+            if ($blog_like) {
+                $blog_like->delete();
+                return response()->json([
+                    'message' => 'Like Successfully removed'
+                ], 200);
+            } else {
+                BlogLike::create([
+                    'blog_id' => $blog->id,
+                    'user_id' => $user->id
+                ]);
+
+                return response()->json([
+                    'message' => 'Liked Successfully'
+                ], 200);
+            }
+        } else {
+            return response()->json([
+                'message' => 'No blog Found'
             ], 403);
         }
     }
