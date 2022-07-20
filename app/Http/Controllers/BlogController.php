@@ -43,4 +43,9 @@ class BlogController extends Controller
             'data' => $blog
         ], 200);
     }
+
+    public function blogs()
+    {
+        return Blog::all();
+    }
 }
