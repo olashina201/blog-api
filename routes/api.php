@@ -23,3 +23,4 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/blog', [BlogController::class, 'create']);
 Route::get('/blogs', [BlogController::class, 'blogs']);
+Route::get('/blog/{id}', [BlogController::class, 'getSingleBlog']);

@@ -48,4 +48,9 @@ class BlogController extends Controller
     {
         return Blog::all();
     }
+
+    public function getSingleBlog($id)
+    {
+        return Blog::find($id);
+    }
 }
