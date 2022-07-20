@@ -16,7 +16,8 @@ class BlogController extends Controller
             'title' => ['required', 'max:200'],
             'description' => 'required',
             'image' => ['required', 'image', 'mimes:jpg,png'],
-            'content' => 'required'
+            'content' => 'required',
+            'user_id' => 'nullable'
         ]);
 
         if ($validate->fails()) {
@@ -37,7 +38,7 @@ class BlogController extends Controller
             'user_id' => $req->user()->id
         ]);
 
-        $blog->load('user:id,email,name');
+        $blog->load('user');
 
         return response()->json([
             'message' => 'Blog Created successfully',
