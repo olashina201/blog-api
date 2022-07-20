@@ -94,7 +94,7 @@ class BlogController extends Controller
 
     public function update(Request $req, $id)
     {
-        $blog = Blog::with('user')->find($id);
+        $blog = Blog::with('user')->where('id', $id);
         if ($blog && $blog->user_id == $req->user()->id) {
             $image_name = '';
             $validate = Validator::make($req->all(), [
