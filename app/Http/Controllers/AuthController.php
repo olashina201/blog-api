@@ -43,7 +43,7 @@ class AuthController extends Controller
     {
         $validate = Validator::make($req->all(), [
             'email' => ['required', 'email'],
-            'password' => ['required'],
+            'password' => 'required',
         ]);
 
         if ($validate->fails()) {
