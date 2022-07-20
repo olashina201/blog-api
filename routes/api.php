@@ -26,5 +26,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/blog', [BlogController::class, 'create'])->middleware('auth:sanctum');
 Route::get('/blogs', [BlogController::class, 'blogs']);
 Route::get('/blog/{id}', [BlogController::class, 'getSingleBlog']);
-Route::delete('/blog/{id}', [BlogController::class, 'destroy']);
-Route::put('/blog/{id}', [BlogController::class, 'update']);
+Route::delete('/blog/{id}', [BlogController::class, 'destroy'])->middleware('auth:sanctum');
+Route::put('/blog/{id}', [BlogController::class, 'update'])->middleware('auth:sanctum');

@@ -17,7 +17,6 @@ class BlogController extends Controller
             'description' => 'required',
             'image' => ['required', 'image', 'mimes:jpg,png'],
             'content' => 'required',
-            'user_id' => 'nullable'
         ]);
 
         if ($validate->fails()) {
@@ -93,55 +92,53 @@ class BlogController extends Controller
         }
     }
 
-    public function update($id, Request $req)
+    public function update(Request $req, $id)
     {
         $blog = Blog::with('user')->find($id);
-        if ($blog) {
-            if ($blog->user_id == $req->user()->id) {
-                $validate = Validator::make($req->all(), [
-                    'title' => ['required', 'max:200'],
-                    'description' => 'required',
-                    'image' => ['nullable', 'image', 'mimes:jpg,png'],
-                    'content' => 'required'
-                ]);
+        if ($blog && $blog->user_id == $req->user()->id) {
+            $image_name = '';
+            $validate = Validator::make($req->all(), [
+                'title' => ['required'],
+                'description' => 'required',
+                'image' => ['nullable', 'image', 'mimes:jpg,png'],
+                'content' => 'required'
+            ]);
 
-                if ($validate->fails()) {
-                    return response()->json([
-                        'message' => 'validation fails',
-                        'error' => $validate->errors()
-                    ], 422);
-                }
-
-                if ($req->hasFile('image')) {
-                    $image_name = time() . '.' . $req->image->extension();
-                    $req->image->move(public_path('/uploads/blog_images'), $image_name);
-                    $old_path = public_path() . 'uploads/blog_images/' . $blog->image;
-                    if (File::exists($old_path)) {
-                        File::delete($old_path);
-                    } else {
-                        $image_name = $blog->image;
-                    }
-                }
-
-                $blog->update([
-                    'title' => $req->title,
-                    'description' => $req->description,
-                    'image' => $image_name,
-                    'content' => $req->content,
-                    'user_id' => $req->user()->id
-                ]);
-
-                $blog->load('user:id,email,name');
-
+            if ($validate->fails()) {
                 return response()->json([
-                    'message' => 'Blog Created successfully',
-                    'data' => $blog
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Access denied'
-                ], 403);
+                    'message' => 'Validation error',
+                    'error' => $validate->errors()
+                ], 422);
             }
+            elseif($req->hasFile('image')) {
+                $image_name = time() . '.' . $req->image->extension();
+                $req->image->move(public_path('/uploads/blog_images'), $image_name);
+                $old_path = public_path() . 'uploads/blog_images/' . $blog->image;
+                if (File::exists($old_path)) {
+                    File::delete($old_path);
+                } else {
+                    $image_name = $blog->image;
+                }
+            }
+
+            $blog->update([
+                'title' => $req->title,
+                'description' => $req->description,
+                'image' => $image_name,
+                'content' => $req->content,
+                'user_id' => $req->user()->id
+            ]);
+
+            $blog->load('user:id,email,fullname');
+
+            return response()->json([
+                'message' => 'Blog Updated successfully',
+                'data' => $blog
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Blog with id' . $id . 'not found'
+            ], 403);
         }
     }
 }
