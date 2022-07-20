@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
-class AuthController extends Controller
+class Auth extends Controller
 {
     //
     public function register(Request $req)
@@ -27,9 +27,9 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'fullname' => $req->fulname,
+            'fullname' => $req->fullname,
             'email' => $req->email,
-            'password' => $req->Hash::make($req->password)
+            'password' => Hash::make($req->password)
         ]);
 
         return response()->json([
