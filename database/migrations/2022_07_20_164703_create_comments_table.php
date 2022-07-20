@@ -16,12 +16,13 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->text('comment');
-            $table->integer('blog_id');
-            $table->integer('user_id');
+            $table->unsignedBigInteger('blog_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
             //relation
             $table->foreign('blog_id')->references('id')->on('blogs')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

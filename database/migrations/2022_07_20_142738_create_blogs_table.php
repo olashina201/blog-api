@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('image');
             $table->longText('content');
-            $table->unsignedInteger('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
             //relation
