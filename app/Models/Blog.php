@@ -27,6 +27,9 @@ class Blog extends Model
     public function comments() {
         return $this->hasMany(Comment::class);
     }
+    public function likes() {
+        return $this->hasMany(BlogLike::class);
+    }
 
     public function getImageUrlAttribute() {
         return asset('uploads/blog_images/'.$this->image);

@@ -48,7 +48,7 @@ class BlogController extends Controller
 
     public function blogs()
     {
-        return Blog::withCount('comments')->with('user');
+        return Blog::withCount('comments')->withCount('likes')->get();
     }
 
     public function getSingleBlog($id)
