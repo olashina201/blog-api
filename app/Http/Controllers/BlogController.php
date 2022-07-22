@@ -38,7 +38,7 @@ class BlogController extends Controller
             'user_id' => $req->user()->id
         ]);
 
-        $blog->load('user:id, email, fullname');
+        $blog->load('user:id,email,fullname');
 
         return response()->json([
             'message' => 'Blog Created successfully',
