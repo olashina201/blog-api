@@ -38,7 +38,7 @@ class BlogController extends Controller
             'user_id' => $req->user()->id
         ]);
 
-        $blog->load('user');
+        $blog->load('user:id, email, fullname');
 
         return response()->json([
             'message' => 'Blog Created successfully',
@@ -93,9 +93,9 @@ class BlogController extends Controller
         }
     }
 
-    public function update(Request $req, $id)
+    public function update($id, Request $req)
     {
-        $blog = Blog::with('user')->where('id', $id);
+        $blog = Blog::where('id', $id)->first();
         if ($blog && $blog->user_id == $req->user()->id) {
             $image_name = '';
             $validate = Validator::make($req->all(), [
