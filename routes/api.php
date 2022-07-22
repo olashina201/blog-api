@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +32,4 @@ Route::put('/blog/{id}', [BlogController::class, 'update'])->middleware('auth:sa
 
 //Like and comment
 Route::post('/blog/{id}/like', [BlogController::class, 'toggleLike'])->middleware('auth:sanctum');
-Route::post('/blog/{id}/comment', [CommentController::class, 'create'])->middleware('auth:sanctum');
+Route::post('/blog/{id}/comment', [CommentController::class, 'createComment'])->middleware('auth:sanctum');

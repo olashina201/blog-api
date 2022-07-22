@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function create($blog_id, Request $req)
+    public function createComment($blog_id, Request $req)
     {
         $blog = Blog::where('id', $blog_id);
         if ($blog) {
